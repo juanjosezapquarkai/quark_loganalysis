@@ -64,7 +64,7 @@ with col2:
     )
 
 
-@st.cache_data
+@st.experimental_memo
 def load_data(log_file, errorlevel):
     with open('data/' + log_file + '_.json') as json_file:
         json_data = json.load(json_file)
@@ -93,4 +93,5 @@ if search:
                 gpt = item[0]
                 markdown_str = '<div><p>' + gpt[0] + '. Description: ' + gpt[1] + '<br/><a href="' + gpt[2] + '">' + gpt[2] + '</a><br/>' + '<ul style="list-style: none;"><li>' + item[1] + '</li></ul></p></div>'
                 st.markdown(markdown_str, unsafe_allow_html=True)
+                st.markdown("---")
 
