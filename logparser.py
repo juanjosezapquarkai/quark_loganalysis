@@ -75,6 +75,7 @@ def parseHtml(url):
     return result_dict
 
 def parse_logfile(logfile):
+    print('parsing ' + logfile)
     log_list = []
 
     with open(logfile) as logf:
@@ -122,12 +123,21 @@ def parse_logfile(logfile):
         #print(log_message_data)
 
     query_dict = {} #load_queries()
+    query_html_data = {}
+    query_gpt = {}
     no_results = [] #load_no_results()
     print('log_list = ' + str(len(log_list)))
     for item_index, item in enumerate(log_list):
         if 'query' in item:
             query = item['query'].strip()
-            print('query = ' + query)
+            #print('query = ' + query)
+            #print(query_html_data)
+            #print(query_gpt)
+            if query in query_html_data:
+                item['html_data'] = query_html_data[query]
+            if query in query_gpt:
+                item['gpt'] = query_gpt[query]
+            log_list[item_index] = item
             if query in query_dict:
                 continue
             if query in no_results:
@@ -142,14 +152,23 @@ def parse_logfile(logfile):
                     item['query_result'] = j
                     html_data = parseHtml(j)
                     if len(html_data) > 0:
-                        item['html_data'] = html_data
-                        # placeholder text for gpt field. should have function that will generate this part
-                        item['gpt'] = 'placeholder'
-                    log_list[item_index] = item
+                        query_html_data[query] = html_data
+                        query_gpt[query] = 'placeholder'
                     break
             if not found:
                 no_results.append(query)
             time.sleep(5)
+
+            print('got here 1')
+            print(query_html_data)
+            print(query_gpt)
+            if query in query_html_data:
+                print('got here 2')
+                item['html_data'] = query_html_data[query]
+            if query in query_gpt:
+                print('got here 3')
+                item['gpt'] = query_gpt[query]
+            log_list[item_index] = item
 
     write_queries(query_dict)
     write_no_results(no_results)
