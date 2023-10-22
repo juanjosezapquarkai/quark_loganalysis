@@ -90,6 +90,7 @@ if search:
             st.write('No ' + levelfilter + ' found in file ' + log_file)
         else:
             for item in log_data:
-                markdown_str = '<div><p>' + item[0] + '<br/>' + '<ul style="list-style: none;"><li>' + item[1] + '</li></ul></p></div>'
+                gpt = item[0]
+                markdown_str = '<div><p>' + gpt[0] + '. Description: ' + gpt[1] + '<br/><a href="' + gpt[2] + '">' + gpt[2] + '</a><br/>' + '<ul style="list-style: none;"><li>' + item[1] + '</li></ul></p></div>'
                 st.markdown(markdown_str, unsafe_allow_html=True)
 

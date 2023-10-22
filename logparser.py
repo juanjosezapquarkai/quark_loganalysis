@@ -125,6 +125,7 @@ def parse_logfile(logfile):
     query_dict = {} #load_queries()
     query_html_data = {}
     query_gpt = {}
+    query_results = {}
     no_results = [] #load_no_results()
     print('log_list = ' + str(len(log_list)))
     for item_index, item in enumerate(log_list):
@@ -137,6 +138,8 @@ def parse_logfile(logfile):
                 item['html_data'] = query_html_data[query]
             if query in query_gpt:
                 item['gpt'] = query_gpt[query]
+            if query in query_results:
+                item['query_result'] = query_results[query]
             log_list[item_index] = item
             if query in query_dict:
                 continue
@@ -150,10 +153,11 @@ def parse_logfile(logfile):
                     found = True
                     print(query + ': ' + j)
                     item['query_result'] = j
+                    query_results[query] = j
                     html_data = parseHtml(j)
                     if len(html_data) > 0:
                         query_html_data[query] = html_data
-                        query_gpt[query] = 'placeholder'
+                        query_gpt[query] = [html_data['bug_header'], html_data['bug_desc'], j]
                     break
             if not found:
                 no_results.append(query)
