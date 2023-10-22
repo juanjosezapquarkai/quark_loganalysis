@@ -1,4 +1,6 @@
 import streamlit as st
+import json
+import os
 
 APP_NAME = 'Quark Log Analysis'
 
@@ -51,14 +53,36 @@ with col2:
     available_filters = [
         "",
         "alerts",
-        "erros",
+        "errors",
         "alerts and errors",
     ]
-    filter = st.selectbox(
+    levelfilter = st.selectbox(
         'Select a filter',
         available_filters
     )
 
 
+@st.cache_data
+def load_data(log_file, errorlevel):
+    with open('data/' + log_file + '_.json') as json_file:
+        json_data = json.load(json_file)
+    log_data = []
+    for item in json_data:
+        log_message = item['logmessage']
+        try:
+            gpt = item['gpt']
+        except:
+            return log_file
+        log_data.append([gpt, log_message])
+
+    return log_data
 search = st.button('Search', type='primary')
+if search:
+    if not os.path.isfile('data/' + log_file + '_.json'):
+        st.write("ERROR: could not find log file")
+    else:
+        log_data = load_data(log_file, levelfilter)
+        for item in log_data:
+            markdown_str = '<div><p>' + item[0] + '<br/>' + '<ul style="list-style: none;"><li>' + item[1] + '</li></ul></p></div>'
+            st.markdown(markdown_str, unsafe_allow_html=True)
 
